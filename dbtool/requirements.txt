@@ -1,0 +1,6 @@
+mysqlclient
+openpyxl
+pandas
+numpy
+django
+djangorestframework
