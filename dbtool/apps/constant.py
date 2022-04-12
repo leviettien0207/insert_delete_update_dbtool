@@ -1,9 +1,9 @@
 from pathlib import Path
 import os
 
-CUT_RANGE = ["IDEAL", "PREMIUM", "VARY GOOD", "GOOD", "FAIR"]
+CUT_RANGE = ["IDEAL", "PREMIUM", "VERY GOOD", "GOOD", "FAIR"]
 COLOR_RANGE = ["D", "E", "F", "G", "H", "I", "J"]
-CLARITY_RANGE = ["FL", "SI1", "SI2", "VS1", "VS2", "VVS2"]
+CLARITY_RANGE = ["FL", "SI1", "SI2", "VS1", "VS2", "VVS1", "VVS2", "I1"]
 DB_COMMAND_RANGE = ['INSERT', 'UPDATE', 'DELETE']
 EXCEL_COLUMNS = ['db_command', 'index', 'carat', 'cut', 'color', 'clarity',
                  'depth', 'table', 'price', 'x', 'y', 'z', 'status']

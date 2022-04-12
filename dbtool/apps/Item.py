@@ -1,6 +1,19 @@
 from .constant import *
 from .models import diamond
 
+class diam:
+    def __init__(self, id, carat, cut, clarity, color, depth, table, price, x, y, z):
+        self.id = int(id)
+        self.carat = float(carat) if carat is not None else None
+        self.cut = cut if cut is not None else None
+        self. clarity = clarity if clarity is not None else None
+        self.color = color if color is not None else None
+        self.depth = float(depth) if depth is not None else None
+        self.table = float(table) if table is not None else None
+        self.price = float(price) if price is not None else None
+        self.x = float(x) if x is not None else None
+        self.y = float(y) if y is not None else None
+        self.z = float(z) if z is not None else None
 
 class Item:
     def __init__(self, data_row):

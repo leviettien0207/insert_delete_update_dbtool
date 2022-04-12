@@ -26,24 +26,33 @@ class Import(APIView):
             return Response(FAIL_OVERALL)
 
         # take data from sheet
-        all_data = pandas.DataFrame(sheet_handle.values)
+        df = pandas.DataFrame(sheet_handle.values)
 
-        for idx, row_data in all_data.iterrows():
+        # new_header = df.iloc[0] #grab the first row for the header
+        # df = df[1:] #take the data less the header row
+        # df.columns = new_header #set the header row as the df header
+        # df.drop_duplicates(subset=['id'], inplace=True)
+        # excel_handle.save(PATH_FILE)
+        count = 0
+        for idx, row_data in df.iterrows():
             self.row_errors.clear()
             if idx == 0:
                 continue  # ignore first row
             row_number = idx + 1
 
-            print(row_data[5])
-            print(type(row_data[5]))
-
             self.writeCell(sheet_handle, row_number, DIAMOND_COLUMNS, '')
             if self.isCommand(row_data):  # check exist command
                 self.execute_row(sheet_handle, row_number, row_data)  # --> add db (if possible) write result
             else:
-                self.writeCell(sheet_handle, row_number, DIAMOND_COLUMNS, str(self.row_errors))
-        excel_handle.save(PATH_FILE)
+                self.writeCell(sheet_handle, row_number, DIAMOND_COLUMNS, MSG_WRONG_COMMAND.format(row_data[0]))
+            if count == 200 :
+                diamond.objects.bulk_create(self.success_Item)
+                excel_handle.save(PATH_FILE)
+                self.success_Item.clear()
+                count = 0 
         diamond.objects.bulk_create(self.success_Item)
+        excel_handle.save(PATH_FILE)
+        
 
         return Response(SUCCESS_200)
 
@@ -64,17 +73,14 @@ class Import(APIView):
         self.success_Item.clear()
 
     def isCommand(self, row_data):  # check existence db_command
-        if row_data[0].upper() not in DB_COMMAND_RANGE:
-            self.row_errors.append(MSG_MISSING_INFO.format(EXCEL_COLUMNS[0]))
-            return False
-        else:
+        if row_data[0] is not None and row_data[0].upper() in DB_COMMAND_RANGE:
             return True
+        else:
+            return False
 
     def execute_row(self, ws, row_number, row_data):
         self.row_errors.clear()  # todo whether write all errors or not
-        if row_data[0].upper() not in DB_COMMAND_RANGE:
-            self.writeCell(ws, row_number, DIAMOND_COLUMNS, MSG_WRONG_COMMAND.format(row_data[0]))
-        elif row_data[0].upper() == 'INSERT':
+        if row_data[0].upper() == 'INSERT':
             self.exec_insert(ws, row_number, row_data)
         elif row_data[0].upper() == 'DELETE':
             self.exec_delete(ws, row_number, row_data)
