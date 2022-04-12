@@ -17,7 +17,7 @@ FAIL_RECORD = "Can't find such that record with id {}"
 
 EXIST_ID = "Already there is an id {}"
 
-PATH_FILE = os.path.join(Path(__file__).resolve().parent.parent, 'test.xlsx')
+PATH_FILE = os.path.join(Path(__file__).resolve().parent.parent) #, 'test.xlsx')
 DIAMOND_COLUMNS = 13
 
 MSG_MISSING_INFO = 'missing {}'

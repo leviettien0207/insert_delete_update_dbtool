@@ -6,20 +6,20 @@ from rest_framework.response import Response
 from .constant import *
 from .Item import Item
 from .models import diamond
+import os
 
 
 class Import(APIView):
     permission_classes = [permissions.AllowAny]
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.errors = []
-        self.row_errors = []
-        self.success_Item = []
+    errors = []
+    row_errors = []
+    success_Item = []
 
-    def post(self, request):
+    def post(self, request, filepath):
         self.reset_list()  # todo kiểm tra liệu có cần reset không?
-        excel_handle = self.open_excel(PATH_FILE)
+        path_file = os.path.join(PATH_FILE, filepath)
+        excel_handle = self.open_excel(path_file)
         sheet_handle = self.open_sheet(excel_handle, 'diamonds')
         if len(self.errors) != 0:
             FAIL_OVERALL["ERRORS"] = FAIL_OVERALL["ERRORS"].format(self.errors)
@@ -47,11 +47,12 @@ class Import(APIView):
                 self.writeCell(sheet_handle, row_number, DIAMOND_COLUMNS, MSG_WRONG_COMMAND.format(row_data[0]))
             if count == 200 :
                 diamond.objects.bulk_create(self.success_Item)
-                excel_handle.save(PATH_FILE)
+                excel_handle.save(path_file)
                 self.success_Item.clear()
-                count = 0 
+                count = 0
+            print('processing....row{} ok'.format(row_number))
         diamond.objects.bulk_create(self.success_Item)
-        excel_handle.save(PATH_FILE)
+        excel_handle.save(path_file)
         
 
         return Response(SUCCESS_200)
